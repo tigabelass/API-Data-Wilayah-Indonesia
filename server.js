@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const app = express();
 const port = 3000;
+
 app.use(express.json());
 app.use(cors());
 
@@ -15,24 +16,25 @@ const client = new MongoClient(process.env.MONGODB, {
     strict: true,
     deprecationErrors: true,
   },
-  tls: true,
 });
 
+let db;
 async function connectDB() {
-  try {
-    await client.connect();
-    console.log("✅ MongoDB Connected!");
-  } catch (error) {
-    console.error("❌ MongoDB Connection Error:", error);
+  if (!db) {
+    try {
+      await client.connect();
+      db = client.db("tigabelass");
+      console.log("✅ MongoDB Connected!");
+    } catch (error) {
+      console.error("❌ MongoDB Connection Error:", error);
+    }
   }
 }
-connectDB();
-
-const db = client.db("tigabelass");
-const collection = db.collection("province");
 
 app.post("/provinsi", async (req, res) => {
   try {
+    await connectDB();
+    const collection = db.collection("province");
     const { nama, kota } = req.body;
     const result = await collection.insertOne({ nama, kota });
     res.json({
@@ -46,6 +48,8 @@ app.post("/provinsi", async (req, res) => {
 
 app.get("/provinsi", async (req, res) => {
   try {
+    await connectDB();
+    const collection = db.collection("province");
     const provinsiList = await collection.find().toArray();
     res.json(provinsiList);
   } catch (error) {
@@ -55,9 +59,11 @@ app.get("/provinsi", async (req, res) => {
 
 app.put("/provinsi/:id", async (req, res) => {
   try {
+    await connectDB();
+    const collection = db.collection("province");
     const { id } = req.params;
     const { nama, kota } = req.body;
-    const result = await collection.updateMany(
+    const result = await collection.updateOne(
       { _id: new ObjectId(id) },
       { $set: { nama, kota } }
     );
@@ -71,6 +77,8 @@ app.put("/provinsi/:id", async (req, res) => {
 
 app.delete("/provinsi/:id", async (req, res) => {
   try {
+    await connectDB();
+    const collection = db.collection("province");
     const { id } = req.params;
     const result = await collection.deleteOne({
       _id: new ObjectId(id),
