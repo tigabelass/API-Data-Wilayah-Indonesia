@@ -15,6 +15,7 @@ const client = new MongoClient(process.env.MONGODB, {
     strict: true,
     deprecationErrors: true,
   },
+  tls: true,
 });
 
 async function connectDB() {
