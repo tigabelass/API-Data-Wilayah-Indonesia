@@ -42,7 +42,7 @@ node index.js
 - Atur **Environment**:
   - **Runtime:** Node.js
   - **Build Command:** `npm install`
-  - **Start Command:** `node index.js`
+  - **Start Command:** `npm run dev`
 - Tambahkan **Environment Variable** `MONGODB`
 - Klik **Deploy**
 
