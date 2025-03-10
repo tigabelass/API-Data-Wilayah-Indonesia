@@ -1,10 +1,13 @@
 const express = require("express");
+const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const dotenv = require("dotenv");
 
 dotenv.config();
 const app = express();
 const port = 3000;
+app.use(express.json());
+app.use(cors());
 
 const client = new MongoClient(process.env.MONGODB, {
   serverApi: {
@@ -26,8 +29,6 @@ connectDB();
 
 const db = client.db("tigabelass");
 const collection = db.collection("province");
-
-app.use(express.json());
 
 app.post("/provinsi", async (req, res) => {
   try {
