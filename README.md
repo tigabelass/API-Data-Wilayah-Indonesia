@@ -11,7 +11,7 @@ API ini menyediakan data provinsi dan kota di Indonesia dengan menggunakan Mongo
 ## 🛠️ Instalasi & Konfigurasi
 ### 1. Clone Repository
 ```sh
-git clone https://github.com/username/api-wilayah.git
+git clone https://github.com/tigabelass/API-Data-Wilayah-Indonesia.git
 cd api-wilayah
 ```
 
