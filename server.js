@@ -22,6 +22,7 @@ let db;
 async function connectDB() {
   if (!db) {
     try {
+      console.log("🔄 Mencoba koneksi ke MongoDB...");
       await client.connect();
       db = client.db("tigabelass");
       console.log("✅ MongoDB Connected!");
@@ -48,11 +49,19 @@ app.post("/provinsi", async (req, res) => {
 
 app.get("/provinsi", async (req, res) => {
   try {
+    console.log("📥 Request masuk ke /provinsi");
     await connectDB();
+    if (!db) {
+      console.error("❌ Database tidak terhubung!");
+      return res.status(500).json({ error: "Database tidak terhubung!" });
+    }
     const collection = db.collection("province");
-    const provinsiList = await collection.find().toArray();
+    console.log("🔎 Mengambil data dari MongoDB...");
+    const provinsiList = await collection.find().limit(50).toArray();
+    console.log("✅ Data berhasil diambil!");
     res.json(provinsiList);
   } catch (error) {
+    console.error("❌ Error saat mengambil data:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -80,9 +89,7 @@ app.delete("/provinsi/:id", async (req, res) => {
     await connectDB();
     const collection = db.collection("province");
     const { id } = req.params;
-    const result = await collection.deleteOne({
-      _id: new ObjectId(id),
-    });
+    const result = await collection.deleteOne({ _id: new ObjectId(id) });
     if (result.deletedCount === 0)
       return res.status(404).json({ error: "Provinsi tidak ditemukan" });
     res.json({ message: "Provinsi berhasil dihapus" });
@@ -95,6 +102,7 @@ app.get("/", (req, res) => {
   res.send("MongoDB API is Running!");
 });
 
-app.listen(port, () => {
+app.listen(port, async () => {
+  await connectDB();
   console.log(`🚀 Server berjalan di http://localhost:${port}`);
 });
